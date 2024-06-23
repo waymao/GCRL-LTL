@@ -3,11 +3,12 @@ import random
 
 import torch
 import numpy as np
-from stable_baselines3 import PPO
+from stable_baselines3 import SAC, PPO
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.env_util import make_vec_env
 
 from envs import ZonesEnv, ZonePrimitiveEnv
+from envs.safety.zones_env import zone
 
 
 def main(args):
@@ -21,10 +22,10 @@ def main(args):
     env_fn = lambda : ZonePrimitiveEnv(env=ZonesEnv(zones=[], use_fixed_map=False, timeout=timeout, config={}, walled=False), direction=direction)
     env = make_vec_env(env_fn, n_envs=num_cpu, seed=seed, vec_env_cls=SubprocVecEnv)
     
-    model = PPO('MlpPolicy', env, verbose=1)
+    model = PPO('MlpPolicy', env, verbose=1, tensorboard_log="logs/ppo/{}".format(direction))
     model.learn(total_timesteps=total_timesteps)
 
-    model.save('/models/primitives/{}'.format(direction))
+    model.save('models/primitives/ppo_{}'.format(direction))
 
 
 if __name__ == '__main__':

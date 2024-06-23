@@ -133,7 +133,6 @@ class ZonesEnv(Engine):
                 pos_in_type = list(np.array(self.zones_pos)[ind])
 
                 obs[f'zones_lidar_{zone_type}'] = self.obs_lidar(pos_in_type, GROUP_ZONE)
-
         return obs
 
     def render_lidars(self):

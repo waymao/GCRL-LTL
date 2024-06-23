@@ -49,8 +49,8 @@ class TrajectoryBuffer:
         for pid in range(self.n_envs):
             self.buffers[pid] = {
                 'obs': np.zeros((buffer_length, self.obs_dim), dtype=np.float32),
-                'success': np.zeros((buffer_length, 1), dtype=np.bool), 
-                'steps': np.zeros((buffer_length, 1), dtype=np.int),
+                'success': np.zeros((buffer_length, 1), dtype=bool), 
+                'steps': np.zeros((buffer_length, 1), dtype=int),
             }
         self.pos = 0
 

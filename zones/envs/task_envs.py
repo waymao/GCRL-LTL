@@ -113,7 +113,7 @@ class ZoneRandomGoalEnv(gym.Wrapper):
         self.goal_index = (self.goal_index + 1) % len(self.goals)
         obs = super().reset()
         goal = self.goals_representation[self.goals[self.goal_index]]
-        return np.concatenate((obs, goal))
+        return self.current_observation()
 
     def current_goal(self):
         return self.goals[self.goal_index]
@@ -192,8 +192,8 @@ class ZoneRandomGoalTrajEnv(gym.Wrapper):
             self.primitives.append(PPO.load(os.path.join(self.primitives_path, direction), device=device))
         self.observation_space = Dict({
             'obs': Box(low=-np.inf, high=np.inf, shape=(100,), dtype=np.float32),
-            'success': Box(low=0, high=np.inf, shape=(1,), dtype=np.bool),
-            'steps': Box(low=0, high=np.inf, shape=(1,), dtype=np.int),
+            'success': Box(low=0, high=1, shape=(1,), dtype=bool),
+            'steps': Box(low=0, high=9999, shape=(1,), dtype=int),
         })
         if self.use_primitves:
             self.action_space = Discrete(len(self.primitives))
@@ -214,10 +214,9 @@ class ZoneRandomGoalTrajEnv(gym.Wrapper):
         goal = self.zones_representation[self.current_goal()]
         current_obs = {
             'obs': np.concatenate([obs, goal]),
-            'steps': np.array([self.executed_timesteps], dtype=np.int),
-            'success': np.array([self.success], dtype=np.bool),
+            'steps': np.array([self.executed_timesteps], dtype=int),
+            'success': np.array([self.success], dtype=bool),
         }
-        
         return current_obs
 
     def custom_observation(self, goal:str):
